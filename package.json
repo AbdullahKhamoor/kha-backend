@@ -1,0 +1,15 @@
+{
+  "name": "backend-class-1",
+  "version": "1.0.0",
+  "description": "a backend setUp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "author": "Abdullah Khamoor",
+  "license": "ISC"
+}
