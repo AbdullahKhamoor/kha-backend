@@ -2,9 +2,8 @@
   "name": "backend-class-1",
   "version": "1.0.0",
   "description": "a backend setUp",
-  "type":"module",
+  "type": "module",
   "main": "index.js",
-
   "scripts": {
     "dev": "nodemon src/index.js"
   },
@@ -15,6 +14,7 @@
   "author": "Abdullah Khamoor",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
   }
 }
