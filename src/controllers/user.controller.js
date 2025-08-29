@@ -1,20 +1,20 @@
-import { asyncHandler } from "../utils/asynchandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 
 
-const generateAccessAndRefereshTokens = async(userId) => 
+const generateAccessAndRefreshTokens = async (userId) => 
   {
   try {
      const user = await User.findById(userId)
     const accessToken = user.generateAccessToken()
-    const refereshToken = user.generateRefreshToken()
-    user.refereshToken = refereshToken
-    await user.save({ ValiditeBeforeSave: true })
+    const refreshToken = user.generateRefreshToken()
+    user.refreshToken = refreshToken
+    await user.save({ validateBeforeSave: false })
 
-    return {accessToken, refereshToken}
+    return {accessToken, refreshToken}
 
 
   } catch (error) {
@@ -103,6 +103,8 @@ const loginUser = asyncHandler(async (req, res) => {
     //todo   send cookie 
 
     const {email, username, password }  = req.body
+    console.log(email);
+
     
     if(!(username || email)){
         throw new ApiError(400, "username or email is required")
@@ -111,18 +113,23 @@ const loginUser = asyncHandler(async (req, res) => {
    const user = await User.findOne({
       $or: [{ username }, { email }]
     })
+    console.log(user)
 
     if(!user) {
       throw new ApiError(404, "User doesnot exist")
     }
 
    const isPasswordValid = await user.isPasswordCorrect(password)
+   console.log(isPasswordValid)
 
      if(!isPasswordValid) {
       throw new ApiError(401, "Invalid user credentials")
     }
 
-    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
+    console.log(accessToken)
+    console.log(refreshToken)
+    
     const loggedInUser = await  User.findById(user._id).select("-password -refreshToken")
 
     const options = {
@@ -132,7 +139,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     return res.status(200)
     .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("refreshToken", refreshToken, options) 
     .json(
       new ApiResponse(
         200,
